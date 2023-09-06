@@ -1,0 +1,948 @@
+skipping __init__ /opt/conda/lib/python3.10/contextlib.py
+skipping __enter__ /opt/conda/lib/python3.10/contextlib.py
+skipping __init__ /opt/conda/lib/python3.10/contextlib.py
+skipping __enter__ /opt/conda/lib/python3.10/contextlib.py
+skipping enable_dynamic /opt/conda/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py
+Step 1: torchdynamo start tracing toy_example
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:18
+TRACE LOAD_FAST a []
+TRACE LOAD_GLOBAL torch [TensorVariable()]
+TRACE LOAD_ATTR abs [TensorVariable(), TorchVariable(<module 'torch' from '/opt/conda/lib/python3.10/site-packages/torch/__init__.py'>)]
+TRACE LOAD_FAST a [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>)]
+TRACE CALL_FUNCTION 1 [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>), TensorVariable()]
+TRACE LOAD_CONST 1 [TensorVariable(), TensorVariable()]
+TRACE BINARY_ADD None [TensorVariable(), TensorVariable(), ConstantVariable(int)]
+TRACE BINARY_TRUE_DIVIDE None [TensorVariable(), TensorVariable()]
+TRACE STORE_FAST x [TensorVariable()]
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:19
+TRACE LOAD_FAST b []
+TRACE LOAD_ATTR sum [TensorVariable()]
+TRACE CALL_FUNCTION 0 [GetAttrVariable(TensorVariable(), sum)]
+TRACE LOAD_CONST 0 [TensorVariable()]
+TRACE COMPARE_OP < [TensorVariable(), ConstantVariable(int)]
+TRACE POP_JUMP_IF_FALSE 38 [TensorVariable()]
+generic_jump triggered compile
+COMPILING GRAPH due to GraphCompileReason(reason='generic_jump TensorVariable()', user_stack=[<FrameSummary file /home/cse/workspace/src/pytorch_playground/hello_dynamo.py, line 19 in toy_example>])
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_0 <eval_with_key>.1 opcode         name     target                                                  args              kwargs
+-------------  -------  ------------------------------------------------------  ----------------  --------
+placeholder    a        a                                                       ()                {}
+placeholder    b        b                                                       ()                {}
+call_function  abs_1    <built-in method abs of type object at 0x7f9e902d3bc0>  (a,)              {}
+call_function  add      <built-in function add>                                 (abs_1, 1)        {}
+call_function  truediv  <built-in function truediv>                             (a, add)          {}
+call_method    sum_1    sum                                                     (b,)              {}
+call_function  lt       <built-in function lt>                                  (sum_1, 0)        {}
+output         output   output                                                  ((truediv, lt),)  {}
+
+ORIGINAL BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 18           0 LOAD_FAST                0 (a)
+              2 LOAD_GLOBAL              0 (torch)
+              4 LOAD_METHOD              1 (abs)
+              6 LOAD_FAST                0 (a)
+              8 CALL_METHOD              1
+             10 LOAD_CONST               1 (1)
+             12 BINARY_ADD
+             14 BINARY_TRUE_DIVIDE
+             16 STORE_FAST               2 (x)
+
+ 19          18 LOAD_FAST                1 (b)
+             20 LOAD_METHOD              2 (sum)
+             22 CALL_METHOD              0
+             24 LOAD_CONST               2 (0)
+             26 COMPARE_OP               0 (<)
+             28 POP_JUMP_IF_FALSE       19 (to 38)
+
+ 20          30 LOAD_FAST                1 (b)
+             32 LOAD_CONST               3 (-1)
+             34 BINARY_MULTIPLY
+             36 STORE_FAST               1 (b)
+
+ 21     >>   38 LOAD_FAST                2 (x)
+             40 LOAD_FAST                1 (b)
+             42 BINARY_MULTIPLY
+             44 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 16           0 LOAD_GLOBAL              3 (__compiled_fn_0)
+              2 LOAD_FAST                0 (a)
+              4 LOAD_FAST                1 (b)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          2
+             10 STORE_FAST               2 (x)
+             12 POP_JUMP_IF_FALSE       12 (to 24)
+             14 LOAD_GLOBAL              4 (__resume_at_30_1)
+             16 LOAD_FAST                1 (b)
+             18 LOAD_FAST                2 (x)
+             20 CALL_FUNCTION            2
+             22 RETURN_VALUE
+        >>   24 LOAD_GLOBAL              5 (__resume_at_38_2)
+             26 LOAD_FAST                1 (b)
+             28 LOAD_FAST                2 (x)
+             30 CALL_FUNCTION            2
+             32 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'a' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d629300; to 'Tensor' at 0x7f9e2d4f9170>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2e3bde40; to 'Tensor' at 0x7f9e2d2b99e0>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            global 'torch' FUNCTION_MATCH
+            {
+                'guard_types': None,
+                'code': None,
+                'obj_weakref': None
+                'guarded_class': None
+            }
+            
+skipping _fn /opt/conda/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py
+skipping nothing /opt/conda/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py
+skipping __exit__ /opt/conda/lib/python3.10/contextlib.py
+skipping __exit__ /opt/conda/lib/python3.10/contextlib.py
+Step 1: torchdynamo start tracing <graph break in toy_example>
+TRACE JUMP_ABSOLUTE 40 []
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:21
+TRACE LOAD_FAST x []
+TRACE LOAD_FAST b [TensorVariable()]
+TRACE BINARY_MULTIPLY None [TensorVariable(), TensorVariable()]
+TRACE RETURN_VALUE None [TensorVariable()]
+Step 1: torchdynamo done tracing <graph break in toy_example> (RETURN_VALUE)
+RETURN_VALUE triggered compile
+COMPILING GRAPH due to None
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_3 <eval_with_key>.3 opcode         name    target                   args       kwargs
+-------------  ------  -----------------------  ---------  --------
+placeholder    b       b                        ()         {}
+placeholder    x       x                        ()         {}
+call_function  mul     <built-in function mul>  (x, b)     {}
+output         output  output                   ((mul,),)  {}
+
+ORIGINAL BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 JUMP_ABSOLUTE           20 (to 40)
+              2 LOAD_FAST                2 (a)
+              4 LOAD_GLOBAL              0 (torch)
+              6 LOAD_ATTR                1 (abs)
+              8 LOAD_FAST                2 (a)
+             10 CALL_FUNCTION            1
+             12 LOAD_CONST               1 (1)
+             14 BINARY_ADD
+             16 BINARY_TRUE_DIVIDE
+             18 STORE_FAST               1 (x)
+             20 LOAD_FAST                0 (b)
+             22 LOAD_ATTR                2 (sum)
+             24 CALL_FUNCTION            0
+             26 LOAD_CONST               2 (0)
+             28 COMPARE_OP               0 (<)
+             30 POP_JUMP_IF_FALSE       20 (to 40)
+             32 LOAD_FAST                0 (b)
+             34 LOAD_CONST               3 (-1)
+             36 BINARY_MULTIPLY
+             38 STORE_FAST               0 (b)
+
+ 21     >>   40 LOAD_FAST                1 (x)
+             42 LOAD_FAST                0 (b)
+             44 BINARY_MULTIPLY
+             46 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 LOAD_GLOBAL              3 (__compiled_fn_3)
+              2 LOAD_FAST                0 (b)
+              4 LOAD_FAST                1 (x)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          1
+             10 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2e3bde40; to 'Tensor' at 0x7f9e2d2b99e0>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'x' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9e40; to 'Tensor' at 0x7f9e2d3eeb10>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+skipping __call__ /opt/conda/lib/python3.10/weakref.py
+skipping del_ten /opt/conda/lib/python3.10/site-packages/torch/_subclasses/meta_utils.py
+skipping __del__ /opt/conda/lib/python3.10/site-packages/torch/multiprocessing/reductions.py
+skipping _free_weak_ref /opt/conda/lib/python3.10/site-packages/torch/storage.py
+Step 1: torchdynamo start tracing toy_example
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:18
+TRACE LOAD_FAST a []
+TRACE LOAD_GLOBAL torch [TensorVariable()]
+TRACE LOAD_ATTR abs [TensorVariable(), TorchVariable(<module 'torch' from '/opt/conda/lib/python3.10/site-packages/torch/__init__.py'>)]
+TRACE LOAD_FAST a [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>)]
+TRACE CALL_FUNCTION 1 [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>), TensorVariable()]
+TRACE LOAD_CONST 1 [TensorVariable(), TensorVariable()]
+TRACE BINARY_ADD None [TensorVariable(), TensorVariable(), ConstantVariable(int)]
+TRACE BINARY_TRUE_DIVIDE None [TensorVariable(), TensorVariable()]
+TRACE STORE_FAST x [TensorVariable()]
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:19
+TRACE LOAD_FAST b []
+TRACE LOAD_ATTR sum [TensorVariable()]
+TRACE CALL_FUNCTION 0 [GetAttrVariable(TensorVariable(), sum)]
+TRACE LOAD_CONST 0 [TensorVariable()]
+TRACE COMPARE_OP < [TensorVariable(), ConstantVariable(int)]
+TRACE POP_JUMP_IF_FALSE 38 [TensorVariable()]
+generic_jump triggered compile
+COMPILING GRAPH due to GraphCompileReason(reason='generic_jump TensorVariable()', user_stack=[<FrameSummary file /home/cse/workspace/src/pytorch_playground/hello_dynamo.py, line 19 in toy_example>])
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_4 <eval_with_key>.5 opcode         name     target                                                  args              kwargs
+-------------  -------  ------------------------------------------------------  ----------------  --------
+placeholder    a        a                                                       ()                {}
+placeholder    b        b                                                       ()                {}
+call_function  abs_1    <built-in method abs of type object at 0x7f9e902d3bc0>  (a,)              {}
+call_function  add      <built-in function add>                                 (abs_1, 1)        {}
+call_function  truediv  <built-in function truediv>                             (a, add)          {}
+call_method    sum_1    sum                                                     (b,)              {}
+call_function  lt       <built-in function lt>                                  (sum_1, 0)        {}
+output         output   output                                                  ((truediv, lt),)  {}
+
+ORIGINAL BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 18           0 LOAD_FAST                0 (a)
+              2 LOAD_GLOBAL              0 (torch)
+              4 LOAD_METHOD              1 (abs)
+              6 LOAD_FAST                0 (a)
+              8 CALL_METHOD              1
+             10 LOAD_CONST               1 (1)
+             12 BINARY_ADD
+             14 BINARY_TRUE_DIVIDE
+             16 STORE_FAST               2 (x)
+
+ 19          18 LOAD_FAST                1 (b)
+             20 LOAD_METHOD              2 (sum)
+             22 CALL_METHOD              0
+             24 LOAD_CONST               2 (0)
+             26 COMPARE_OP               0 (<)
+             28 POP_JUMP_IF_FALSE       19 (to 38)
+
+ 20          30 LOAD_FAST                1 (b)
+             32 LOAD_CONST               3 (-1)
+             34 BINARY_MULTIPLY
+             36 STORE_FAST               1 (b)
+
+ 21     >>   38 LOAD_FAST                2 (x)
+             40 LOAD_FAST                1 (b)
+             42 BINARY_MULTIPLY
+             44 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 16           0 LOAD_GLOBAL              3 (__compiled_fn_4)
+              2 LOAD_FAST                0 (a)
+              4 LOAD_FAST                1 (b)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          2
+             10 STORE_FAST               2 (x)
+             12 POP_JUMP_IF_FALSE       12 (to 24)
+             14 LOAD_GLOBAL              4 (__resume_at_30_5)
+             16 LOAD_FAST                1 (b)
+             18 LOAD_FAST                2 (x)
+             20 CALL_FUNCTION            2
+             22 RETURN_VALUE
+        >>   24 LOAD_GLOBAL              5 (__resume_at_38_6)
+             26 LOAD_FAST                1 (b)
+             28 LOAD_FAST                2 (x)
+             30 CALL_FUNCTION            2
+             32 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'a' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9c60; to 'Tensor' at 0x7f9e2e999760>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2ba160; to 'Tensor' at 0x7f9e2e456250>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            global 'torch' FUNCTION_MATCH
+            {
+                'guard_types': None,
+                'code': None,
+                'obj_weakref': None
+                'guarded_class': None
+            }
+            
+Step 1: torchdynamo start tracing <graph break in toy_example>
+TRACE JUMP_ABSOLUTE 40 []
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:21
+TRACE LOAD_FAST x []
+TRACE LOAD_FAST b [TensorVariable()]
+TRACE BINARY_MULTIPLY None [TensorVariable(), TensorVariable()]
+TRACE RETURN_VALUE None [TensorVariable()]
+Step 1: torchdynamo done tracing <graph break in toy_example> (RETURN_VALUE)
+RETURN_VALUE triggered compile
+COMPILING GRAPH due to None
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_7 <eval_with_key>.7 opcode         name    target                   args       kwargs
+-------------  ------  -----------------------  ---------  --------
+placeholder    b       b                        ()         {}
+placeholder    x       x                        ()         {}
+call_function  mul     <built-in function mul>  (x, b)     {}
+output         output  output                   ((mul,),)  {}
+
+ORIGINAL BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 JUMP_ABSOLUTE           20 (to 40)
+              2 LOAD_FAST                2 (a)
+              4 LOAD_GLOBAL              0 (torch)
+              6 LOAD_ATTR                1 (abs)
+              8 LOAD_FAST                2 (a)
+             10 CALL_FUNCTION            1
+             12 LOAD_CONST               1 (1)
+             14 BINARY_ADD
+             16 BINARY_TRUE_DIVIDE
+             18 STORE_FAST               1 (x)
+             20 LOAD_FAST                0 (b)
+             22 LOAD_ATTR                2 (sum)
+             24 CALL_FUNCTION            0
+             26 LOAD_CONST               2 (0)
+             28 COMPARE_OP               0 (<)
+             30 POP_JUMP_IF_FALSE       20 (to 40)
+             32 LOAD_FAST                0 (b)
+             34 LOAD_CONST               3 (-1)
+             36 BINARY_MULTIPLY
+             38 STORE_FAST               0 (b)
+
+ 21     >>   40 LOAD_FAST                1 (x)
+             42 LOAD_FAST                0 (b)
+             44 BINARY_MULTIPLY
+             46 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 LOAD_GLOBAL              3 (__compiled_fn_7)
+              2 LOAD_FAST                0 (b)
+              4 LOAD_FAST                1 (x)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          1
+             10 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2ba160; to 'Tensor' at 0x7f9e2e456250>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'x' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9b70; to 'Tensor' at 0x7f9e2d3eeb10>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+Step 1: torchdynamo start tracing toy_example
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:18
+TRACE LOAD_FAST a []
+TRACE LOAD_GLOBAL torch [TensorVariable()]
+TRACE LOAD_ATTR abs [TensorVariable(), TorchVariable(<module 'torch' from '/opt/conda/lib/python3.10/site-packages/torch/__init__.py'>)]
+TRACE LOAD_FAST a [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>)]
+TRACE CALL_FUNCTION 1 [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>), TensorVariable()]
+TRACE LOAD_CONST 1 [TensorVariable(), TensorVariable()]
+TRACE BINARY_ADD None [TensorVariable(), TensorVariable(), ConstantVariable(int)]
+TRACE BINARY_TRUE_DIVIDE None [TensorVariable(), TensorVariable()]
+TRACE STORE_FAST x [TensorVariable()]
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:19
+TRACE LOAD_FAST b []
+TRACE LOAD_ATTR sum [TensorVariable()]
+TRACE CALL_FUNCTION 0 [GetAttrVariable(TensorVariable(), sum)]
+TRACE LOAD_CONST 0 [TensorVariable()]
+TRACE COMPARE_OP < [TensorVariable(), ConstantVariable(int)]
+TRACE POP_JUMP_IF_FALSE 38 [TensorVariable()]
+generic_jump triggered compile
+COMPILING GRAPH due to GraphCompileReason(reason='generic_jump TensorVariable()', user_stack=[<FrameSummary file /home/cse/workspace/src/pytorch_playground/hello_dynamo.py, line 19 in toy_example>])
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_8 <eval_with_key>.9 opcode         name     target                                                  args              kwargs
+-------------  -------  ------------------------------------------------------  ----------------  --------
+placeholder    a        a                                                       ()                {}
+placeholder    b        b                                                       ()                {}
+call_function  abs_1    <built-in method abs of type object at 0x7f9e902d3bc0>  (a,)              {}
+call_function  add      <built-in function add>                                 (abs_1, 1)        {}
+call_function  truediv  <built-in function truediv>                             (a, add)          {}
+call_method    sum_1    sum                                                     (b,)              {}
+call_function  lt       <built-in function lt>                                  (sum_1, 0)        {}
+output         output   output                                                  ((truediv, lt),)  {}
+
+ORIGINAL BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 18           0 LOAD_FAST                0 (a)
+              2 LOAD_GLOBAL              0 (torch)
+              4 LOAD_METHOD              1 (abs)
+              6 LOAD_FAST                0 (a)
+              8 CALL_METHOD              1
+             10 LOAD_CONST               1 (1)
+             12 BINARY_ADD
+             14 BINARY_TRUE_DIVIDE
+             16 STORE_FAST               2 (x)
+
+ 19          18 LOAD_FAST                1 (b)
+             20 LOAD_METHOD              2 (sum)
+             22 CALL_METHOD              0
+             24 LOAD_CONST               2 (0)
+             26 COMPARE_OP               0 (<)
+             28 POP_JUMP_IF_FALSE       19 (to 38)
+
+ 20          30 LOAD_FAST                1 (b)
+             32 LOAD_CONST               3 (-1)
+             34 BINARY_MULTIPLY
+             36 STORE_FAST               1 (b)
+
+ 21     >>   38 LOAD_FAST                2 (x)
+             40 LOAD_FAST                1 (b)
+             42 BINARY_MULTIPLY
+             44 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 16           0 LOAD_GLOBAL              3 (__compiled_fn_8)
+              2 LOAD_FAST                0 (a)
+              4 LOAD_FAST                1 (b)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          2
+             10 STORE_FAST               2 (x)
+             12 POP_JUMP_IF_FALSE       12 (to 24)
+             14 LOAD_GLOBAL              4 (__resume_at_30_9)
+             16 LOAD_FAST                1 (b)
+             18 LOAD_FAST                2 (x)
+             20 CALL_FUNCTION            2
+             22 RETURN_VALUE
+        >>   24 LOAD_GLOBAL              5 (__resume_at_38_10)
+             26 LOAD_FAST                1 (b)
+             28 LOAD_FAST                2 (x)
+             30 CALL_FUNCTION            2
+             32 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'a' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2ba020; to 'Tensor' at 0x7f9e3014b600>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9cb0; to 'Tensor' at 0x7f9e2e2e2e30>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            global 'torch' FUNCTION_MATCH
+            {
+                'guard_types': None,
+                'code': None,
+                'obj_weakref': None
+                'guarded_class': None
+            }
+            
+Step 1: torchdynamo start tracing <graph break in toy_example>
+TRACE JUMP_ABSOLUTE 40 []
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:21
+TRACE LOAD_FAST x []
+TRACE LOAD_FAST b [TensorVariable()]
+TRACE BINARY_MULTIPLY None [TensorVariable(), TensorVariable()]
+TRACE RETURN_VALUE None [TensorVariable()]
+Step 1: torchdynamo done tracing <graph break in toy_example> (RETURN_VALUE)
+RETURN_VALUE triggered compile
+COMPILING GRAPH due to None
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_11 <eval_with_key>.11 opcode         name    target                   args       kwargs
+-------------  ------  -----------------------  ---------  --------
+placeholder    b       b                        ()         {}
+placeholder    x       x                        ()         {}
+call_function  mul     <built-in function mul>  (x, b)     {}
+output         output  output                   ((mul,),)  {}
+
+ORIGINAL BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 JUMP_ABSOLUTE           20 (to 40)
+              2 LOAD_FAST                2 (a)
+              4 LOAD_GLOBAL              0 (torch)
+              6 LOAD_ATTR                1 (abs)
+              8 LOAD_FAST                2 (a)
+             10 CALL_FUNCTION            1
+             12 LOAD_CONST               1 (1)
+             14 BINARY_ADD
+             16 BINARY_TRUE_DIVIDE
+             18 STORE_FAST               1 (x)
+             20 LOAD_FAST                0 (b)
+             22 LOAD_ATTR                2 (sum)
+             24 CALL_FUNCTION            0
+             26 LOAD_CONST               2 (0)
+             28 COMPARE_OP               0 (<)
+             30 POP_JUMP_IF_FALSE       20 (to 40)
+             32 LOAD_FAST                0 (b)
+             34 LOAD_CONST               3 (-1)
+             36 BINARY_MULTIPLY
+             38 STORE_FAST               0 (b)
+
+ 21     >>   40 LOAD_FAST                1 (x)
+             42 LOAD_FAST                0 (b)
+             44 BINARY_MULTIPLY
+             46 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 LOAD_GLOBAL              3 (__compiled_fn_11)
+              2 LOAD_FAST                0 (b)
+              4 LOAD_FAST                1 (x)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          1
+             10 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9cb0; to 'Tensor' at 0x7f9e2e2e2e30>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'x' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9bc0; to 'Tensor' at 0x7f9e2ddc6570>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+Step 1: torchdynamo start tracing toy_example
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:18
+TRACE LOAD_FAST a []
+TRACE LOAD_GLOBAL torch [TensorVariable()]
+TRACE LOAD_ATTR abs [TensorVariable(), TorchVariable(<module 'torch' from '/opt/conda/lib/python3.10/site-packages/torch/__init__.py'>)]
+TRACE LOAD_FAST a [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>)]
+TRACE CALL_FUNCTION 1 [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>), TensorVariable()]
+TRACE LOAD_CONST 1 [TensorVariable(), TensorVariable()]
+TRACE BINARY_ADD None [TensorVariable(), TensorVariable(), ConstantVariable(int)]
+TRACE BINARY_TRUE_DIVIDE None [TensorVariable(), TensorVariable()]
+TRACE STORE_FAST x [TensorVariable()]
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:19
+TRACE LOAD_FAST b []
+TRACE LOAD_ATTR sum [TensorVariable()]
+TRACE CALL_FUNCTION 0 [GetAttrVariable(TensorVariable(), sum)]
+TRACE LOAD_CONST 0 [TensorVariable()]
+TRACE COMPARE_OP < [TensorVariable(), ConstantVariable(int)]
+TRACE POP_JUMP_IF_FALSE 38 [TensorVariable()]
+generic_jump triggered compile
+COMPILING GRAPH due to GraphCompileReason(reason='generic_jump TensorVariable()', user_stack=[<FrameSummary file /home/cse/workspace/src/pytorch_playground/hello_dynamo.py, line 19 in toy_example>])
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_12 <eval_with_key>.13 opcode         name     target                                                  args              kwargs
+-------------  -------  ------------------------------------------------------  ----------------  --------
+placeholder    a        a                                                       ()                {}
+placeholder    b        b                                                       ()                {}
+call_function  abs_1    <built-in method abs of type object at 0x7f9e902d3bc0>  (a,)              {}
+call_function  add      <built-in function add>                                 (abs_1, 1)        {}
+call_function  truediv  <built-in function truediv>                             (a, add)          {}
+call_method    sum_1    sum                                                     (b,)              {}
+call_function  lt       <built-in function lt>                                  (sum_1, 0)        {}
+output         output   output                                                  ((truediv, lt),)  {}
+
+ORIGINAL BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 18           0 LOAD_FAST                0 (a)
+              2 LOAD_GLOBAL              0 (torch)
+              4 LOAD_METHOD              1 (abs)
+              6 LOAD_FAST                0 (a)
+              8 CALL_METHOD              1
+             10 LOAD_CONST               1 (1)
+             12 BINARY_ADD
+             14 BINARY_TRUE_DIVIDE
+             16 STORE_FAST               2 (x)
+
+ 19          18 LOAD_FAST                1 (b)
+             20 LOAD_METHOD              2 (sum)
+             22 CALL_METHOD              0
+             24 LOAD_CONST               2 (0)
+             26 COMPARE_OP               0 (<)
+             28 POP_JUMP_IF_FALSE       19 (to 38)
+
+ 20          30 LOAD_FAST                1 (b)
+             32 LOAD_CONST               3 (-1)
+             34 BINARY_MULTIPLY
+             36 STORE_FAST               1 (b)
+
+ 21     >>   38 LOAD_FAST                2 (x)
+             40 LOAD_FAST                1 (b)
+             42 BINARY_MULTIPLY
+             44 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 16           0 LOAD_GLOBAL              3 (__compiled_fn_12)
+              2 LOAD_FAST                0 (a)
+              4 LOAD_FAST                1 (b)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          2
+             10 STORE_FAST               2 (x)
+             12 POP_JUMP_IF_FALSE       12 (to 24)
+             14 LOAD_GLOBAL              4 (__resume_at_30_13)
+             16 LOAD_FAST                1 (b)
+             18 LOAD_FAST                2 (x)
+             20 CALL_FUNCTION            2
+             22 RETURN_VALUE
+        >>   24 LOAD_GLOBAL              5 (__resume_at_38_14)
+             26 LOAD_FAST                1 (b)
+             28 LOAD_FAST                2 (x)
+             30 CALL_FUNCTION            2
+             32 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'a' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9fd0; to 'Tensor' at 0x7f9e3014b600>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9b70; to 'Tensor' at 0x7f9e2e3d6750>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            global 'torch' FUNCTION_MATCH
+            {
+                'guard_types': None,
+                'code': None,
+                'obj_weakref': None
+                'guarded_class': None
+            }
+            
+Step 1: torchdynamo start tracing <graph break in toy_example>
+TRACE JUMP_ABSOLUTE 40 []
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:21
+TRACE LOAD_FAST x []
+TRACE LOAD_FAST b [TensorVariable()]
+TRACE BINARY_MULTIPLY None [TensorVariable(), TensorVariable()]
+TRACE RETURN_VALUE None [TensorVariable()]
+Step 1: torchdynamo done tracing <graph break in toy_example> (RETURN_VALUE)
+RETURN_VALUE triggered compile
+COMPILING GRAPH due to None
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_15 <eval_with_key>.15 opcode         name    target                   args       kwargs
+-------------  ------  -----------------------  ---------  --------
+placeholder    b       b                        ()         {}
+placeholder    x       x                        ()         {}
+call_function  mul     <built-in function mul>  (x, b)     {}
+output         output  output                   ((mul,),)  {}
+
+ORIGINAL BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 JUMP_ABSOLUTE           20 (to 40)
+              2 LOAD_FAST                2 (a)
+              4 LOAD_GLOBAL              0 (torch)
+              6 LOAD_ATTR                1 (abs)
+              8 LOAD_FAST                2 (a)
+             10 CALL_FUNCTION            1
+             12 LOAD_CONST               1 (1)
+             14 BINARY_ADD
+             16 BINARY_TRUE_DIVIDE
+             18 STORE_FAST               1 (x)
+             20 LOAD_FAST                0 (b)
+             22 LOAD_ATTR                2 (sum)
+             24 CALL_FUNCTION            0
+             26 LOAD_CONST               2 (0)
+             28 COMPARE_OP               0 (<)
+             30 POP_JUMP_IF_FALSE       20 (to 40)
+             32 LOAD_FAST                0 (b)
+             34 LOAD_CONST               3 (-1)
+             36 BINARY_MULTIPLY
+             38 STORE_FAST               0 (b)
+
+ 21     >>   40 LOAD_FAST                1 (x)
+             42 LOAD_FAST                0 (b)
+             44 BINARY_MULTIPLY
+             46 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 LOAD_GLOBAL              3 (__compiled_fn_15)
+              2 LOAD_FAST                0 (b)
+              4 LOAD_FAST                1 (x)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          1
+             10 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2b9b70; to 'Tensor' at 0x7f9e2e3d6750>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'x' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2f3ce0; to 'Tensor' at 0x7f9e2ddc6d40>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+Step 1: torchdynamo start tracing toy_example
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:18
+TRACE LOAD_FAST a []
+TRACE LOAD_GLOBAL torch [TensorVariable()]
+TRACE LOAD_ATTR abs [TensorVariable(), TorchVariable(<module 'torch' from '/opt/conda/lib/python3.10/site-packages/torch/__init__.py'>)]
+TRACE LOAD_FAST a [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>)]
+TRACE CALL_FUNCTION 1 [TensorVariable(), TorchVariable(<built-in method abs of type object at 0x7f9e902d3bc0>), TensorVariable()]
+TRACE LOAD_CONST 1 [TensorVariable(), TensorVariable()]
+TRACE BINARY_ADD None [TensorVariable(), TensorVariable(), ConstantVariable(int)]
+TRACE BINARY_TRUE_DIVIDE None [TensorVariable(), TensorVariable()]
+TRACE STORE_FAST x [TensorVariable()]
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:19
+TRACE LOAD_FAST b []
+TRACE LOAD_ATTR sum [TensorVariable()]
+TRACE CALL_FUNCTION 0 [GetAttrVariable(TensorVariable(), sum)]
+TRACE LOAD_CONST 0 [TensorVariable()]
+TRACE COMPARE_OP < [TensorVariable(), ConstantVariable(int)]
+TRACE POP_JUMP_IF_FALSE 38 [TensorVariable()]
+generic_jump triggered compile
+COMPILING GRAPH due to GraphCompileReason(reason='generic_jump TensorVariable()', user_stack=[<FrameSummary file /home/cse/workspace/src/pytorch_playground/hello_dynamo.py, line 19 in toy_example>])
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_16 <eval_with_key>.17 opcode         name     target                                                  args              kwargs
+-------------  -------  ------------------------------------------------------  ----------------  --------
+placeholder    a        a                                                       ()                {}
+placeholder    b        b                                                       ()                {}
+call_function  abs_1    <built-in method abs of type object at 0x7f9e902d3bc0>  (a,)              {}
+call_function  add      <built-in function add>                                 (abs_1, 1)        {}
+call_function  truediv  <built-in function truediv>                             (a, add)          {}
+call_method    sum_1    sum                                                     (b,)              {}
+call_function  lt       <built-in function lt>                                  (sum_1, 0)        {}
+output         output   output                                                  ((truediv, lt),)  {}
+
+ORIGINAL BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 18           0 LOAD_FAST                0 (a)
+              2 LOAD_GLOBAL              0 (torch)
+              4 LOAD_METHOD              1 (abs)
+              6 LOAD_FAST                0 (a)
+              8 CALL_METHOD              1
+             10 LOAD_CONST               1 (1)
+             12 BINARY_ADD
+             14 BINARY_TRUE_DIVIDE
+             16 STORE_FAST               2 (x)
+
+ 19          18 LOAD_FAST                1 (b)
+             20 LOAD_METHOD              2 (sum)
+             22 CALL_METHOD              0
+             24 LOAD_CONST               2 (0)
+             26 COMPARE_OP               0 (<)
+             28 POP_JUMP_IF_FALSE       19 (to 38)
+
+ 20          30 LOAD_FAST                1 (b)
+             32 LOAD_CONST               3 (-1)
+             34 BINARY_MULTIPLY
+             36 STORE_FAST               1 (b)
+
+ 21     >>   38 LOAD_FAST                2 (x)
+             40 LOAD_FAST                1 (b)
+             42 BINARY_MULTIPLY
+             44 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE toy_example /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 16 
+ 16           0 LOAD_GLOBAL              3 (__compiled_fn_16)
+              2 LOAD_FAST                0 (a)
+              4 LOAD_FAST                1 (b)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          2
+             10 STORE_FAST               2 (x)
+             12 POP_JUMP_IF_FALSE       12 (to 24)
+             14 LOAD_GLOBAL              4 (__resume_at_30_17)
+             16 LOAD_FAST                1 (b)
+             18 LOAD_FAST                2 (x)
+             20 CALL_FUNCTION            2
+             22 RETURN_VALUE
+        >>   24 LOAD_GLOBAL              5 (__resume_at_38_18)
+             26 LOAD_FAST                1 (b)
+             28 LOAD_FAST                2 (x)
+             30 CALL_FUNCTION            2
+             32 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'a' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2f3ec0; to 'Tensor' at 0x7f9e2d629300>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2f24d0; to 'Tensor' at 0x7f9e2e3d6750>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            global 'torch' FUNCTION_MATCH
+            {
+                'guard_types': None,
+                'code': None,
+                'obj_weakref': None
+                'guarded_class': None
+            }
+            
+Step 1: torchdynamo start tracing <graph break in toy_example>
+TRACE JUMP_ABSOLUTE 40 []
+TRACE starts_line /home/cse/workspace/src/pytorch_playground/hello_dynamo.py:21
+TRACE LOAD_FAST x []
+TRACE LOAD_FAST b [TensorVariable()]
+TRACE BINARY_MULTIPLY None [TensorVariable(), TensorVariable()]
+TRACE RETURN_VALUE None [TensorVariable()]
+Step 1: torchdynamo done tracing <graph break in toy_example> (RETURN_VALUE)
+RETURN_VALUE triggered compile
+COMPILING GRAPH due to None
+Step 2: calling compiler function dynamo_graph_accumulating_compiler
+Step 2: done compiler function dynamo_graph_accumulating_compiler
+TRACED GRAPH
+ __compiled_fn_19 <eval_with_key>.19 opcode         name    target                   args       kwargs
+-------------  ------  -----------------------  ---------  --------
+placeholder    b       b                        ()         {}
+placeholder    x       x                        ()         {}
+call_function  mul     <built-in function mul>  (x, b)     {}
+output         output  output                   ((mul,),)  {}
+
+ORIGINAL BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 JUMP_ABSOLUTE           20 (to 40)
+              2 LOAD_FAST                2 (a)
+              4 LOAD_GLOBAL              0 (torch)
+              6 LOAD_ATTR                1 (abs)
+              8 LOAD_FAST                2 (a)
+             10 CALL_FUNCTION            1
+             12 LOAD_CONST               1 (1)
+             14 BINARY_ADD
+             16 BINARY_TRUE_DIVIDE
+             18 STORE_FAST               1 (x)
+             20 LOAD_FAST                0 (b)
+             22 LOAD_ATTR                2 (sum)
+             24 CALL_FUNCTION            0
+             26 LOAD_CONST               2 (0)
+             28 COMPARE_OP               0 (<)
+             30 POP_JUMP_IF_FALSE       20 (to 40)
+             32 LOAD_FAST                0 (b)
+             34 LOAD_CONST               3 (-1)
+             36 BINARY_MULTIPLY
+             38 STORE_FAST               0 (b)
+
+ 21     >>   40 LOAD_FAST                1 (x)
+             42 LOAD_FAST                0 (b)
+             44 BINARY_MULTIPLY
+             46 RETURN_VALUE
+
+ 
+MODIFIED BYTECODE <graph break in toy_example> /home/cse/workspace/src/pytorch_playground/hello_dynamo.py line 19 
+ 19           0 LOAD_GLOBAL              3 (__compiled_fn_19)
+              2 LOAD_FAST                0 (b)
+              4 LOAD_FAST                1 (x)
+              6 CALL_FUNCTION            2
+              8 UNPACK_SEQUENCE          1
+             10 RETURN_VALUE
+
+ 
+GUARDS:
+ - 
+            local 'b' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2d2f24d0; to 'Tensor' at 0x7f9e2e3d6750>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            
+ - 
+            local 'x' TENSOR_MATCH
+            {
+                'guard_types': ['TENSOR_MATCH'],
+                'code': None,
+                'obj_weakref': <weakref at 0x7f9e2df6f650; to 'Tensor' at 0x7f9e2e0d0c70>
+                'guarded_class': <weakref at 0x7f9e307b9e40; to 'torch._C._TensorMeta' at 0x4d4b340 (Tensor)>
+            }
+            

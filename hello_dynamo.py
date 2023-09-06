@@ -33,3 +33,5 @@ for _ in range(5):
 
 print("------------------------------------------------")
 torch._dynamo.utils.compile_times()
+
+#TORCH_COMPILE_DEBUG=1  TORCH_LOGS=dynamo,inductor,guards python3 hello_dynamo.py
